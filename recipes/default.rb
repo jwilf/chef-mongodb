@@ -35,7 +35,15 @@ end
 
 if node.recipes.include?("mongodb::default") or node.recipes.include?("mongodb")
   # configure default instance
-  mongodb_instance "mongodb" do
+
+  name = case node['platform']
+         when "centos", "redhat", "fedora", "amazon", "scientific"
+           "mongod"
+         when "ubuntu", "debian", "freebsd"
+           "mongodb"
+         end
+
+  mongodb_instance name do
     mongodb_type "mongod"
     bind_ip      node['mongodb']['bind_ip']
     port         node['mongodb']['port']
